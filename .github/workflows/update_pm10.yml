@@ -1,0 +1,35 @@
+name: Actualizar Monitor PM10
+
+on:
+  schedule:
+    - cron: '0 * * * *'   # cada hora en punto
+  workflow_dispatch:        # permite ejecución manual desde GitHub
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependencias
+        run: pip install requests folium pandas
+
+      - name: Ejecutar script
+        env:
+          METEOSIM_SECRET: ${{ secrets.METEOSIM_SECRET }}
+        run: python scripts/generate_map.py
+
+      - name: Publicar cambios
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --staged --quiet || git commit -m "🗺 Actualización automática $(date -u '+%Y-%m-%d %H:%M') UTC"
+          git push
