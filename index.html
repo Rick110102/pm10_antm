@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="refresh" content="3600"/> <!-- auto-recarga cada hora -->
+  <title>Monitor PM10 · Dos Cruces · Antamina</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:     #0a0e14;
+      --panel:  #111820;
+      --border: #1e2d3d;
+      --accent: #00c8ff;
+      --text:   #c9d8e8;
+      --muted:  #4a6070;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Barlow', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .logo {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 13px;
+      color: var(--accent);
+      letter-spacing: 2px;
+    }
+    .updated {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      margin-left: auto;
+    }
+
+    /* LAYOUT */
+    .container {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 0;
+      height: calc(100vh - 54px);
+    }
+
+    /* SIDEBAR */
+    aside {
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .card-title {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .big-val {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 48px;
+      font-weight: 700;
+      line-height: 1;
+      color: #ef4444;
+    }
+    .big-unit {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .badge {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      background: rgba(239,68,68,.15);
+      color: #ef4444;
+    }
+    .max-time {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    /* Stats */
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-label { color: var(--muted); }
+    .stat-val {
+      font-family: 'Share Tech Mono', monospace;
+      color: var(--accent);
+    }
+
+    /* Tabla */
+    .tabla-datos {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    .tabla-datos th {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      text-align: left;
+      padding: 4px 6px;
+      border-bottom: 1px solid var(--border);
+      letter-spacing: 1px;
+    }
+    .tabla-datos td {
+      padding: 5px 6px;
+      border-bottom: 1px solid rgba(30,45,61,.5);
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    /* Mapa */
+    .map-container {
+      width: 100%;
+      height: 100%;
+    }
+    .map-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">⬡ ANTAMINA · MONITOR PM10 · DOS CRUCES</div>
+  <div class="updated">
+    Actualizado: 24/02/2026 19:05 (Hora Perú) &nbsp;·&nbsp;
+    Próx. actualización en ~1h
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- SIDEBAR -->
+  <aside>
+
+    <div class="card">
+      <div class="card-title">PM10 · Máx. Pronóstico</div>
+      <div class="big-val">2.3</div>
+      <div class="big-unit">μg/m³</div>
+      <span class="badge">🔴 ALTO</span>
+      <div class="max-time">
+        ↑ Hora máximo: 24/02/2026 22:00
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Resumen</div>
+      <div class="stat-row">
+        <span class="stat-label">Punto</span>
+        <span class="stat-val">Dos Cruces</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Coordenadas</span>
+        <span class="stat-val">-9.5602, -77.0598</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Buffer</span>
+        <span class="stat-val">2 km</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Obs. hoy</span>
+        <span class="stat-val">20 registros</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Pronóstico</span>
+        <span class="stat-val">4 registros</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Corte obs/pron</span>
+        <span class="stat-val">19:05</span>
+      </div>
+    </div>
+
+    <div class="card" style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+      <div class="card-title">Serie de pronóstico</div>
+      <div style="overflow-y:auto;flex:1"><table class="dataframe tabla-datos">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Hora</th>
+      <th>PM10 (μg/m³)</th>
+      <th>Tipo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>24/02 20:00</td>
+      <td>2.0727</td>
+      <td><span style='color:#00c8ff'>Pronóstico</span></td>
+    </tr>
+    <tr>
+      <td>24/02 21:00</td>
+      <td>2.0408</td>
+      <td><span style='color:#00c8ff'>Pronóstico</span></td>
+    </tr>
+    <tr>
+      <td>24/02 22:00</td>
+      <td>2.3232</td>
+      <td><span style='color:#f59e0b;font-weight:bold'>★ MÁXIMO</span></td>
+    </tr>
+    <tr>
+      <td>24/02 23:00</td>
+      <td>1.9756</td>
+      <td><span style='color:#00c8ff'>Pronóstico</span></td>
+    </tr>
+  </tbody>
+</table></div>
+    </div>
+
+  </aside>
+
+  <!-- MAPA -->
+  <div class="map-container">
+    <div style="width:100%;"><div style="position:relative;width:100%;height:0;padding-bottom:60%;"><span style="color:#565656">Make this Notebook Trusted to load map: File -> Trust Notebook</span><iframe srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    
+    &lt;meta http-equiv=&quot;content-type&quot; content=&quot;text/html; charset=UTF-8&quot; /&gt;
+    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://code.jquery.com/jquery-3.7.1.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js&quot;&gt;&lt;/script&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css&quot;/&gt;
+    
+            &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no&quot; /&gt;
+            &lt;style&gt;
+                #map_1f7edee82101058ead2264021320be33 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            &lt;/style&gt;
+
+            &lt;style&gt;html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            &lt;/style&gt;
+
+            &lt;style&gt;#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            &lt;/style&gt;
+
+            &lt;script&gt;
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            &lt;/script&gt;
+
+        
+&lt;/head&gt;
+&lt;body&gt;
+    
+    
+    &lt;div style=&#x27;
+        position: fixed; bottom: 30px; right: 15px;
+        background: rgba(10,14,20,0.92);
+        border: 1px solid #1e2d3d; border-radius: 8px;
+        padding: 12px 16px; font-family: monospace;
+        font-size: 12px; color: #c9d8e8; z-index: 9999;
+    &#x27;&gt;
+        &lt;b style=&#x27;color:#00c8ff;letter-spacing:1px&#x27;&gt;PM10 · PRONÓSTICO&lt;/b&gt;&lt;br&gt;&lt;br&gt;
+        &lt;span style=&#x27;color:#22c55e&#x27;&gt;●&lt;/span&gt; &amp;lt; 1 μg/m³ — Bueno&lt;br&gt;
+        &lt;span style=&#x27;color:#f97316&#x27;&gt;●&lt;/span&gt; 1–2 μg/m³ — Moderado&lt;br&gt;
+        &lt;span style=&#x27;color:#ef4444&#x27;&gt;●&lt;/span&gt; &amp;gt; 2 μg/m³ — Alto
+    &lt;/div&gt;
+    
+    
+            &lt;div class=&quot;folium-map&quot; id=&quot;map_1f7edee82101058ead2264021320be33&quot; &gt;&lt;/div&gt;
+        
+&lt;/body&gt;
+&lt;script&gt;
+    
+    
+            var map_1f7edee82101058ead2264021320be33 = L.map(
+                &quot;map_1f7edee82101058ead2264021320be33&quot;,
+                {
+                    center: [-9.5602, -77.0598],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  &quot;zoom&quot;: 14,
+  &quot;zoomControl&quot;: true,
+  &quot;preferCanvas&quot;: false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_56ece2be265c699478eb787bf2d5126e = L.tileLayer(
+                &quot;https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png&quot;,
+                {
+  &quot;minZoom&quot;: 0,
+  &quot;maxZoom&quot;: 20,
+  &quot;maxNativeZoom&quot;: 20,
+  &quot;noWrap&quot;: false,
+  &quot;attribution&quot;: &quot;\u0026copy; \u003ca href=\&quot;https://www.openstreetmap.org/copyright\&quot;\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\&quot;https://carto.com/attributions\&quot;\u003eCARTO\u003c/a\u003e&quot;,
+  &quot;subdomains&quot;: &quot;abcd&quot;,
+  &quot;detectRetina&quot;: false,
+  &quot;tms&quot;: false,
+  &quot;opacity&quot;: 1,
+}
+
+            );
+        
+    
+            tile_layer_56ece2be265c699478eb787bf2d5126e.addTo(map_1f7edee82101058ead2264021320be33);
+        
+    
+            var circle_5e18577686e4ddc1aa1af06058530f41 = L.circle(
+                [-9.5602, -77.0598],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#ef4444&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: true, &quot;fillColor&quot;: &quot;#ef4444&quot;, &quot;fillOpacity&quot;: 0.25, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;opacity&quot;: 1.0, &quot;radius&quot;: 2000, &quot;stroke&quot;: true, &quot;weight&quot;: 2}
+            ).addTo(map_1f7edee82101058ead2264021320be33);
+        
+    
+            circle_5e18577686e4ddc1aa1af06058530f41.bindTooltip(
+                `&lt;div&gt;
+                     Buffer 2km · PM10 Máx: 2.32 μg/m³
+                 &lt;/div&gt;`,
+                {
+  &quot;sticky&quot;: true,
+}
+            );
+        
+    
+            var circle_marker_d4c08a32493686ffad72901c33431911 = L.circleMarker(
+                [-9.5602, -77.0598],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#ffffff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: true, &quot;fillColor&quot;: &quot;#ef4444&quot;, &quot;fillOpacity&quot;: 1, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;opacity&quot;: 1.0, &quot;radius&quot;: 7, &quot;stroke&quot;: true, &quot;weight&quot;: 2}
+            ).addTo(map_1f7edee82101058ead2264021320be33);
+        
+    
+        var popup_8c850a4a88949c280f7dc61de633f244 = L.popup({
+  &quot;maxWidth&quot;: 260,
+});
+
+        
+            
+                var html_e43ff4d8dd9d70bbb4139a1b63985f3a = $(`&lt;div id=&quot;html_e43ff4d8dd9d70bbb4139a1b63985f3a&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;             &lt;div style=&#x27;font-family:monospace;min-width:220px;padding:4px&#x27;&gt;             &lt;b&gt;📍 Dos Cruces&lt;/b&gt;&lt;br&gt;             &lt;hr style=&#x27;margin:4px 0&#x27;&gt;             PM10 Máx Pronóstico: &lt;b&gt;2.32 μg/m³&lt;/b&gt;&lt;br&gt;             Categoría: &lt;b style=&#x27;color:#ef4444&#x27;&gt;🔴 ALTO&lt;/b&gt;&lt;br&gt;             Hora del máximo: &lt;b&gt;24/02/2026 22:00&lt;/b&gt;&lt;br&gt;             &lt;hr style=&#x27;margin:4px 0&#x27;&gt;             Actualizado: 24/02/2026 19:05 (Hora Perú)             &lt;/div&gt;         &lt;/div&gt;`)[0];
+                popup_8c850a4a88949c280f7dc61de633f244.setContent(html_e43ff4d8dd9d70bbb4139a1b63985f3a);
+            
+        
+
+        circle_marker_d4c08a32493686ffad72901c33431911.bindPopup(popup_8c850a4a88949c280f7dc61de633f244)
+        ;
+
+        
+    
+&lt;/script&gt;
+&lt;/html&gt;" style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe></div></div>
+  </div>
+
+</div>
+</body>
+</html>
