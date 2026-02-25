@@ -17,23 +17,23 @@ PERU_TZ       = timezone(timedelta(hours=-5))
 
 ESTACIONES = [
     {
-        "nombre":      "Dos Cruces",
-        "record_code": "alertdata:ai-daily-model:antamina_predictions:antamina-daily_model-tft:AlertaPM10_diaria:2CRUCES:1771909200",
+        "nombre":        "Dos Cruces",
+        "location_code": "2CRUCES",
         "lat": -9.56023, "lng": -77.05986, "buffer_m": 2000,
     },
     {
-        "nombre":      "Quebrada",
-        "record_code": "alertdata:ai-daily-model:antamina_predictions:antamina-daily_model-tft:AlertaPM10_diaria:QUEBRADA:1771909200",
+        "nombre":        "Quebrada",
+        "location_code": "QUEBRADA",
         "lat": -9.55501, "lng": -77.08584, "buffer_m": 1000,
     },
     {
-        "nombre":      "Tucush",
-        "record_code": "alertdata:ai-daily-model:antamina_predictions:antamina-daily_model-tft:AlertaPM10_diaria:TUCUSH:1771909200",
+        "nombre":        "Tucush",
+        "location_code": "TUCUSH",
         "lat": -9.51011, "lng": -77.05715, "buffer_m": 2000,
     },
     {
-        "nombre":      "Usupallares",
-        "record_code": "alertdata:ai-daily-model:antamina_predictions:antamina-daily_model-tft:AlertaPM10_diaria:USUPALLARES:1771909200",
+        "nombre":        "Usupallares",
+        "location_code": "USUPALLARES",
         "lat": -9.55422, "lng": -77.07305, "buffer_m": 2000,
     },
 ]
@@ -52,12 +52,32 @@ def get_token():
     return r.json()["access_token"]
 
 # ══════════════════════════════════════════════════════════
-# API
+# CALCULAR RECORD CODE DEL DÍA
+# ══════════════════════════════════════════════════════════
+def get_record_code(location_code):
+    """
+    Construye el record_code del día actual calculando el timestamp
+    Unix del inicio del día en hora Perú (00:00 PE → UTC).
+    Ej: 25/02/2026 00:00 PE → 1771995600
+    """
+    now_peru   = datetime.now(PERU_TZ)
+    inicio_dia = now_peru.replace(hour=0, minute=0, second=0, microsecond=0)
+    timestamp  = int(inicio_dia.astimezone(timezone.utc).timestamp())
+    code = (
+        f"alertdata:ai-daily-model:antamina_predictions:"
+        f"antamina-daily_model-tft:AlertaPM10_diaria:"
+        f"{location_code}:{timestamp}"
+    )
+    print(f"  Record code: {code}")
+    return code
+
+# ══════════════════════════════════════════════════════════
+# CONSULTAR SERIE TEMPORAL
 # ══════════════════════════════════════════════════════════
 def get_timeserie(token, record_code):
     url = f"{API_BASE}/v3/alertdata/{SITE_ID}/topics/{TOPIC}/records/{record_code}/timeserie"
     r = requests.get(url, headers={
-        "Accept": "application/json",
+        "Accept":        "application/json",
         "Authorization": f"Bearer {token}"
     })
     r.raise_for_status()
@@ -77,7 +97,6 @@ def procesar(items, corte_dt):
             continue
         row = {"time": t, "value": round(val, 4)}
         (observados if t <= corte_dt else pronostico).append(row)
-    # Ordenar por tiempo
     observados.sort(key=lambda x: x["time"])
     pronostico.sort(key=lambda x: x["time"])
     return observados, pronostico
@@ -135,24 +154,13 @@ def generar_mapa(resultados):
 # CHART DATA
 # ══════════════════════════════════════════════════════════
 def preparar_chart_data(resultados):
-    # Eje X fijo: 00:00 a 23:00 (24 horas)
     eje_x = [f"{h:02d}:00" for h in range(24)]
-
     charts = []
     for est in resultados:
         color, _, _ = get_color(est["max_val"])
-
         obs  = [{"x": r["time"].strftime("%H:%M"), "y": r["value"]} for r in est["observados"]]
         pron = [{"x": r["time"].strftime("%H:%M"), "y": r["value"]} for r in est["pronostico"]]
-
-        # Agregar el último punto observado al inicio del pronóstico
-        # para que la línea sea continua sin brecha
-        pron_continuo = []
-        if obs and pron:
-            pron_continuo = [obs[-1]] + pron  # une el último obs con el primer pron
-        else:
-            pron_continuo = pron
-
+        pron_continuo = ([obs[-1]] + pron) if obs and pron else pron
         charts.append({
             "nombre":   est["nombre"],
             "color":    color,
@@ -196,8 +204,6 @@ def generar_html(resultados, mapa_render, now_peru, hora_corte):
       color:var(--text); font-family:'Barlow',sans-serif;
       overflow:hidden;
     }}
-
-    /* HEADER */
     header {{
       height:48px; flex-shrink:0;
       background:var(--panel);
@@ -216,16 +222,12 @@ def generar_html(resultados, mapa_render, now_peru, hora_corte):
       display:flex; gap:20px;
     }}
     .hdr-right span {{ color:var(--accent); }}
-
-    /* BODY GRID */
     .body {{
       display:grid;
       grid-template-columns: 40% 60%;
       grid-template-rows: calc(100vh - 84px) 36px;
       height:calc(100vh - 48px);
     }}
-
-    /* CHARTS PANEL */
     .charts-panel {{
       grid-column:1; grid-row:1;
       display:flex; flex-direction:column;
@@ -246,8 +248,6 @@ def generar_html(resultados, mapa_render, now_peru, hora_corte):
       padding-left:2px;
     }}
     .plotly-div {{ width:100%; height:140px; }}
-
-    /* MAP PANEL */
     .map-panel {{
       grid-column:2; grid-row:1;
       overflow:hidden; position:relative;
@@ -256,8 +256,6 @@ def generar_html(resultados, mapa_render, now_peru, hora_corte):
       width:100% !important;
       height:100% !important;
     }}
-
-    /* LEYENDA CHARTS */
     .legend-charts {{
       grid-column:1; grid-row:2;
       background:var(--legend);
@@ -270,18 +268,10 @@ def generar_html(resultados, mapa_render, now_peru, hora_corte):
       font-size:9px; color:var(--muted);
     }}
     .li {{ display:flex; align-items:center; gap:5px; }}
-    .line-solid {{
-      width:20px; height:2px; background:#94a3b8;
-    }}
-
-    .line-pron {{
-      width:20px; height:2px;
-      background: width:20px; height:2px; background:#00c8ff;
-    }}
+    .line-solid {{ width:20px; height:2px; background:#94a3b8; }}
+    .line-pron  {{ width:20px; height:2px; background:#00c8ff; }}
     .line-corte {{ width:2px; height:12px; background:#f59e0b; }}
     .dot-max    {{ width:8px; height:8px; border-radius:50%; background:#ef4444; }}
-
-    /* LEYENDA MAP */
     .legend-map {{
       grid-column:2; grid-row:2;
       background:var(--legend);
@@ -292,18 +282,13 @@ def generar_html(resultados, mapa_render, now_peru, hora_corte):
       font-family:'Share Tech Mono',monospace;
       font-size:9px; color:var(--muted);
     }}
-    .dot {{
-      width:10px; height:10px;
-      border-radius:50%; flex-shrink:0;
-    }}
-
+    .dot {{ width:10px; height:10px; border-radius:50%; flex-shrink:0; }}
     ::-webkit-scrollbar {{ width:3px; }}
     ::-webkit-scrollbar-thumb {{ background:var(--border); border-radius:2px; }}
   </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header>
   <div class="logo">⬡ ANTAMINA · MONITOR PM10 · 4 ESTACIONES</div>
   <div class="hdr-right">
@@ -315,17 +300,14 @@ def generar_html(resultados, mapa_render, now_peru, hora_corte):
 
 <div class="body">
 
-  <!-- GRÁFICAS -->
   <div class="charts-panel">
     <div class="charts-scroll" id="charts-scroll"></div>
   </div>
 
-  <!-- MAPA inline -->
   <div class="map-panel" id="map-panel">
     {mapa_render}
   </div>
 
-  <!-- LEYENDA GRÁFICAS -->
   <div class="legend-charts">
     <div class="li"><div class="line-solid"></div><span>Observado</span></div>
     <div class="li"><div class="line-pron"></div><span>Pronóstico</span></div>
@@ -333,7 +315,6 @@ def generar_html(resultados, mapa_render, now_peru, hora_corte):
     <div class="li"><div class="dot-max"></div><span>Máx. pronóstico</span></div>
   </div>
 
-  <!-- LEYENDA MAPA -->
   <div class="legend-map">
     <div class="li"><div class="dot" style="background:#22c55e"></div><span>&lt; 1 μg/m³ Bueno</span></div>
     <div class="li"><div class="dot" style="background:#f97316"></div><span>1–2 μg/m³ Moderado</span></div>
@@ -346,8 +327,6 @@ def generar_html(resultados, mapa_render, now_peru, hora_corte):
 <script>
 const CHART_DATA = {chart_data};
 const HORA_CORTE = "{hora_corte}";
-
-// Eje X fijo igual para todas las gráficas: 00:00 — 23:00
 const EJE_X_FIJO = CHART_DATA[0].eje_x;
 
 const LAYOUT_BASE = {{
@@ -356,26 +335,17 @@ const LAYOUT_BASE = {{
   font:   {{ family:'Share Tech Mono, monospace', size:9, color:'#c9d8e8' }},
   margin: {{ t:8, r:8, b:38, l:40 }},
   xaxis: {{
-    showgrid:    true,
-    gridcolor:   '#1e2d3d',
-    gridwidth:   1,
-    tickfont:    {{ size:8 }},
-    color:       '#4a6070',
-    tickangle:   -45,
-    // Fijar categorías iguales para todas las gráficas
-    type:        'category',
-    categoryorder: 'array',
+    showgrid:true, gridcolor:'#1e2d3d', gridwidth:1,
+    tickfont:{{ size:8 }}, color:'#4a6070', tickangle:-45,
+    type:'category',
+    categoryorder:'array',
     categoryarray: EJE_X_FIJO,
-    range:       [-0.5, EJE_X_FIJO.length - 0.5],
+    range: [-0.5, EJE_X_FIJO.length - 0.5],
   }},
   yaxis: {{
-    showgrid:  true,
-    gridcolor: '#1e2d3d',
-    gridwidth: 1,
-    tickfont:  {{ size:8 }},
-    color:     '#4a6070',
-    rangemode: 'tozero',
-    title: {{ text:'μg/m³', font:{{ size:8, color:'#4a6070' }} }}
+    showgrid:true, gridcolor:'#1e2d3d', gridwidth:1,
+    tickfont:{{ size:8 }}, color:'#4a6070', rangemode:'tozero',
+    title:{{ text:'μg/m³', font:{{ size:8, color:'#4a6070' }} }}
   }},
   showlegend: false,
 }};
@@ -383,7 +353,6 @@ const LAYOUT_BASE = {{
 const scroll = document.getElementById('charts-scroll');
 
 CHART_DATA.forEach((est, i) => {{
-  // Contenedor
   const block = document.createElement('div');
   block.className = 'chart-block';
   const label = document.createElement('div');
@@ -398,75 +367,60 @@ CHART_DATA.forEach((est, i) => {{
 
   const traces = [];
 
-  // Traza 1 — Observado: línea sólida gris
   if (est.obs.length) {{
     traces.push({{
-      x:    est.obs.map(d => d.x),
-      y:    est.obs.map(d => d.y),
-      type: 'scatter',
-      mode: 'lines',
-      line: {{ color:'#94a3b8', width:1.5 }},
-      hovertemplate: '%{{x}}<br>%{{y:.2f}} μg/m³<extra></extra>',
+      x: est.obs.map(d => d.x),
+      y: est.obs.map(d => d.y),
+      type:'scatter', mode:'lines',
+      line:{{ color:'#94a3b8', width:1.5 }},
+      hovertemplate:'%{{x}}<br>%{{y:.2f}} μg/m³<extra></extra>',
     }});
   }}
 
-  // Traza 2 — Pronóstico: línea punteada celeste
-  // Incluye el último punto observado para línea continua sin brecha
   if (est.pron.length) {{
     traces.push({{
-      x:    est.pron.map(d => d.x),
-      y:    est.pron.map(d => d.y),
-      type: 'scatter',
-      mode: 'lines',
-      line: {{ color:'#00c8ff', width:1.5}},
-      hovertemplate: '%{{x}}<br>%{{y:.2f}} μg/m³<extra></extra>',
+      x: est.pron.map(d => d.x),
+      y: est.pron.map(d => d.y),
+      type:'scatter', mode:'lines',
+      line:{{ color:'#00c8ff', width:1.5 }},
+      hovertemplate:'%{{x}}<br>%{{y:.2f}} μg/m³<extra></extra>',
     }});
   }}
 
-  // Marcador simple en el máximo pronóstico
   if (est.max_time) {{
     traces.push({{
-      x:    [est.max_time],
-      y:    [est.max_val],
-      type: 'scatter',
-      mode: 'markers+text',
-      marker: {{
-        color: '#ef4444', size: 8, symbol: 'circle',
-        line: {{ color:'#fff', width:1 }}
-      }},
-      text:         [est.max_val.toFixed(2)],
-      textposition: 'top center',
-      textfont:     {{ color:'#ef4444', size:9 }},
-      hovertemplate: 'Máx: %{{y:.2f}} μg/m³<extra></extra>',
+      x:[est.max_time], y:[est.max_val],
+      type:'scatter', mode:'markers+text',
+      marker:{{ color:'#ef4444', size:8, symbol:'circle',
+                line:{{ color:'#fff', width:1 }} }},
+      text:[est.max_val.toFixed(2)],
+      textposition:'top center',
+      textfont:{{ color:'#ef4444', size:9 }},
+      hovertemplate:'Máx: %{{y:.2f}} μg/m³<extra></extra>',
     }});
   }}
 
-  // Layout con línea de corte en hora en punto
   const layout = JSON.parse(JSON.stringify(LAYOUT_BASE));
   layout.shapes = [{{
-    type: 'line',
-    x0:   HORA_CORTE, x1: HORA_CORTE,
-    y0:   0,          y1: 1, yref: 'paper',
-    line: {{ color:'#f59e0b', width:1.5, dash:'dash' }}
+    type:'line',
+    x0:HORA_CORTE, x1:HORA_CORTE,
+    y0:0, y1:1, yref:'paper',
+    line:{{ color:'#f59e0b', width:1.5, dash:'dash' }}
   }}];
   layout.annotations = [{{
-    x:          HORA_CORTE,
-    y:          0.97, yref: 'paper',
-    text:       HORA_CORTE,
-    showarrow:  false,
-    font:       {{ color:'#f59e0b', size:8 }},
-    xanchor:    'left', yanchor: 'top',
-    bgcolor:    'rgba(245,158,11,0.12)',
+    x:HORA_CORTE, y:0.97, yref:'paper',
+    text:HORA_CORTE, showarrow:false,
+    font:{{ color:'#f59e0b', size:8 }},
+    xanchor:'left', yanchor:'top',
+    bgcolor:'rgba(245,158,11,0.12)',
     bordercolor:'#f59e0b', borderwidth:1, borderpad:2
   }}];
 
-  Plotly.newPlot('ch' + i, traces, layout, {{
-    responsive:     true,
-    displayModeBar: false
+  Plotly.newPlot('ch'+i, traces, layout, {{
+    responsive:true, displayModeBar:false
   }});
 }});
 
-// Invalidar mapa Leaflet tras render
 setTimeout(function() {{
   if (window.L) {{
     Object.keys(window).forEach(function(k) {{
@@ -498,15 +452,17 @@ if __name__ == "__main__":
     resultados = []
 
     for est in ESTACIONES:
-        print(f"\n[{est['nombre']}] Consultando...")
+        print(f"\n[{est['nombre']}] Calculando record del día...")
         try:
-            items         = get_timeserie(token, est["record_code"])
-            obs, pron     = procesar(items, corte_dt)
-            max_item      = max(pron, key=lambda x: x["value"]) if pron else None
-            max_val       = max_item["value"] if max_item else 0
-            max_time      = max_item["time"]  if max_item else None
+            record_code = get_record_code(est["location_code"])
+            items       = get_timeserie(token, record_code)
+            obs, pron   = procesar(items, corte_dt)
+            max_item    = max(pron, key=lambda x: x["value"]) if pron else None
+            max_val     = max_item["value"] if max_item else 0
+            max_time    = max_item["time"]  if max_item else None
             _, cat, emoji = get_color(max_val)
             print(f"  Obs:{len(obs)} Pron:{len(pron)} Máx:{max_val:.2f} μg/m³ {emoji} {cat}")
+
             resultados.append({
                 "nombre":     est["nombre"],
                 "lat":        est["lat"],
