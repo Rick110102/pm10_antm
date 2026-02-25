@@ -2,8 +2,11 @@ name: Actualizar Monitor PM10
 
 on:
   schedule:
-    - cron: '0 * * * *'   # cada hora en punto
-  workflow_dispatch:        # permite ejecución manual desde GitHub
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write        # ← esto es lo que faltaba
 
 jobs:
   update:
