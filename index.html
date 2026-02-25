@@ -3,254 +3,129 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta http-equiv="refresh" content="3600"/> <!-- auto-recarga cada hora -->
-  <title>Monitor PM10 · Dos Cruces · Antamina</title>
+  <meta http-equiv="refresh" content="3600"/>
+  <title>Monitor PM10 · Antamina</title>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;600&display=swap" rel="stylesheet"/>
   <style>
-    :root {
-      --bg:     #0a0e14;
-      --panel:  #111820;
-      --border: #1e2d3d;
-      --accent: #00c8ff;
-      --text:   #c9d8e8;
-      --muted:  #4a6070;
-    }
+    :root { --bg:#0a0e14; --panel:#111820; --border:#1e2d3d; --accent:#00c8ff; --text:#c9d8e8; --muted:#4a6070; }
     * { margin:0; padding:0; box-sizing:border-box; }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Barlow', sans-serif;
-      min-height: 100vh;
-    }
-
-    /* HEADER */
-    header {
-      background: var(--panel);
-      border-bottom: 1px solid var(--border);
-      padding: 14px 28px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    .logo {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 13px;
-      color: var(--accent);
-      letter-spacing: 2px;
-    }
-    .updated {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 11px;
-      color: var(--muted);
-      margin-left: auto;
-    }
-
-    /* LAYOUT */
-    .container {
-      display: grid;
-      grid-template-columns: 340px 1fr;
-      gap: 0;
-      height: calc(100vh - 54px);
-    }
-
-    /* SIDEBAR */
-    aside {
-      background: var(--panel);
-      border-right: 1px solid var(--border);
-      padding: 20px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .card {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 16px;
-    }
-    .card-title {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 10px;
-      color: var(--muted);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 12px;
-    }
-    .big-val {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 48px;
-      font-weight: 700;
-      line-height: 1;
-      color: #22c55e;
-    }
-    .big-unit {
-      font-size: 13px;
-      color: var(--muted);
-      margin-top: 4px;
-    }
-    .badge {
-      display: inline-block;
-      margin-top: 8px;
-      padding: 4px 12px;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 1px;
-      background: rgba(239,68,68,.15);
-      color: #22c55e;
-    }
-    .max-time {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 11px;
-      color: var(--muted);
-      margin-top: 8px;
-    }
-
-    /* Stats */
-    .stat-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      padding: 6px 0;
-      border-bottom: 1px solid var(--border);
-    }
-    .stat-row:last-child { border-bottom: none; }
-    .stat-label { color: var(--muted); }
-    .stat-val {
-      font-family: 'Share Tech Mono', monospace;
-      color: var(--accent);
-    }
-
-    /* Tabla */
-    .tabla-datos {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 12px;
-    }
-    .tabla-datos th {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 10px;
-      color: var(--muted);
-      text-align: left;
-      padding: 4px 6px;
-      border-bottom: 1px solid var(--border);
-      letter-spacing: 1px;
-    }
-    .tabla-datos td {
-      padding: 5px 6px;
-      border-bottom: 1px solid rgba(30,45,61,.5);
-      font-family: 'Share Tech Mono', monospace;
-    }
-
-    /* Mapa */
-    .map-container {
-      width: 100%;
-      height: 100%;
-    }
-    .map-container iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    body { background:var(--bg); color:var(--text); font-family:'Barlow',sans-serif;
+            height:100vh; display:grid; grid-template-rows:54px 1fr;
+            grid-template-columns:300px 1fr; overflow:hidden; }
+    header { grid-column:1/-1; background:var(--panel); border-bottom:1px solid var(--border);
+              padding:0 24px; display:flex; align-items:center; gap:16px; }
+    .logo { font-family:'Share Tech Mono',monospace; font-size:12px; color:var(--accent); letter-spacing:2px; }
+    .updated { font-family:'Share Tech Mono',monospace; font-size:11px; color:var(--muted); margin-left:auto; }
+    aside { background:var(--panel); border-right:1px solid var(--border);
+             padding:16px; overflow-y:auto; display:flex; flex-direction:column; gap:12px; }
+    .card { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:14px; }
+    .card-title { font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--muted);
+                   letter-spacing:1px; text-transform:uppercase; margin-bottom:8px; }
+    .big-val { font-family:'Share Tech Mono',monospace; font-size:32px; font-weight:700; line-height:1; }
+    .big-unit { font-size:12px; color:var(--muted); margin-top:3px; }
+    .badge { display:inline-block; margin-top:6px; padding:3px 10px; border-radius:4px;
+              font-size:11px; font-weight:600; letter-spacing:1px; }
+    .max-time { font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--muted); margin-top:6px; }
+    .map-wrap { width:100%; height:100%; overflow:hidden; }
+    .map-wrap iframe { width:100%; height:100%; border:none; }
+    .tabla-datos { width:100%; border-collapse:collapse; font-size:12px; }
+    .tabla-datos th { font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--muted);
+                       text-align:left; padding:4px 8px; border-bottom:1px solid var(--border); letter-spacing:1px; }
+    .tabla-datos td { padding:5px 8px; border-bottom:1px solid rgba(30,45,61,.5);
+                       font-family:'Share Tech Mono',monospace; }
+    ::-webkit-scrollbar { width:4px; }
+    ::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
   </style>
 </head>
 <body>
-
 <header>
-  <div class="logo">⬡ ANTAMINA · MONITOR PM10 · DOS CRUCES</div>
-  <div class="updated">
-    Actualizado: 24/02/2026 19:19 (Hora Perú) &nbsp;·&nbsp;
-    Próx. actualización en ~1h
-  </div>
+  <div class="logo">⬡ ANTAMINA · MONITOR PM10 · 4 ESTACIONES</div>
+  <div class="updated">Actualizado: 24/02/2026 19:50 (Hora Perú) &nbsp;·&nbsp; Próx. ~1h</div>
 </header>
-
-<div class="container">
-
-  <!-- SIDEBAR -->
-  <aside>
-
-    <div class="card">
-      <div class="card-title">PM10 · Máx. Pronóstico</div>
-      <div class="big-val">2.3</div>
-      <div class="big-unit">μg/m³</div>
-      <span class="badge">🟢 BUENO</span>
-      <div class="max-time">
-        ↑ Hora máximo: 24/02/2026 22:00
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Resumen</div>
-      <div class="stat-row">
-        <span class="stat-label">Punto</span>
-        <span class="stat-val">Dos Cruces</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">Coordenadas</span>
-        <span class="stat-val">-9.5602, -77.0598</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">Buffer</span>
-        <span class="stat-val">2 km</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">Obs. hoy</span>
-        <span class="stat-val">20 registros</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">Pronóstico</span>
-        <span class="stat-val">4 registros</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">Corte obs/pron</span>
-        <span class="stat-val">19:19</span>
-      </div>
-    </div>
-
-    <div class="card" style="flex:1;overflow:hidden;display:flex;flex-direction:column">
-      <div class="card-title">Serie de pronóstico</div>
-      <div style="overflow-y:auto;flex:1"><table class="dataframe tabla-datos">
-  <thead>
-    <tr style="text-align: right;">
-      <th>Hora</th>
-      <th>PM10 (μg/m³)</th>
-      <th>Tipo</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>24/02 20:00</td>
-      <td>2.0727</td>
-      <td><span style='color:#00c8ff'>Pronóstico</span></td>
-    </tr>
-    <tr>
-      <td>24/02 21:00</td>
-      <td>2.0408</td>
-      <td><span style='color:#00c8ff'>Pronóstico</span></td>
-    </tr>
-    <tr>
-      <td>24/02 22:00</td>
-      <td>2.3232</td>
-      <td><span style='color:#f59e0b;font-weight:bold'>★ MÁXIMO</span></td>
-    </tr>
-    <tr>
-      <td>24/02 23:00</td>
-      <td>1.9756</td>
-      <td><span style='color:#00c8ff'>Pronóstico</span></td>
-    </tr>
-  </tbody>
-</table></div>
-    </div>
-
-  </aside>
-
-  <!-- MAPA -->
-  <div class="map-container">
-    <div style="width:100%;"><div style="position:relative;width:100%;height:0;padding-bottom:60%;"><span style="color:#565656">Make this Notebook Trusted to load map: File -> Trust Notebook</span><iframe srcdoc="&lt;!DOCTYPE html&gt;
+<aside>
+        <div class="card">
+            <div class="card-title">📍 Dos Cruces · 2km</div>
+            <div class="big-val" style="color:#ef4444">3.34</div>
+            <div class="big-unit">μg/m³</div>
+            <span class="badge" style="background:rgba(239,68,68,.15);color:#ef4444">🔴 ALTO</span>
+            <div class="max-time">
+                Máx: 20:00
+                &nbsp;·&nbsp; Pron: 4 reg.
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-title">📍 Quebrada · 1km</div>
+            <div class="big-val" style="color:#22c55e">0.58</div>
+            <div class="big-unit">μg/m³</div>
+            <span class="badge" style="background:rgba(34,197,94,.15);color:#22c55e">🟢 BUENO</span>
+            <div class="max-time">
+                Máx: 23:00
+                &nbsp;·&nbsp; Pron: 4 reg.
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-title">📍 Tucush · 2km</div>
+            <div class="big-val" style="color:#ef4444">3.40</div>
+            <div class="big-unit">μg/m³</div>
+            <span class="badge" style="background:rgba(239,68,68,.15);color:#ef4444">🔴 ALTO</span>
+            <div class="max-time">
+                Máx: 21:00
+                &nbsp;·&nbsp; Pron: 4 reg.
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-title">📍 Usupallares · 2km</div>
+            <div class="big-val" style="color:#ef4444">2.34</div>
+            <div class="big-unit">μg/m³</div>
+            <span class="badge" style="background:rgba(239,68,68,.15);color:#ef4444">🔴 ALTO</span>
+            <div class="max-time">
+                Máx: 21:00
+                &nbsp;·&nbsp; Pron: 4 reg.
+            </div>
+        </div></aside>
+<div style="display:flex;flex-direction:column;overflow:hidden">
+  <div style="background:var(--panel);border-bottom:1px solid var(--border);padding:12px 16px;overflow-x:auto">
+    <table class='tabla-datos'>
+        <thead><tr>
+            <th>Estación</th><th>PM10 Máx (μg/m³)</th><th>Categoría</th>
+            <th>Hora Máx</th><th>Buffer</th><th>Obs.</th><th>Pron.</th>
+        </tr></thead>
+        <tbody><tr>
+            <td>Dos Cruces</td>
+            <td style='color:#ef4444;font-weight:bold'>3.34</td>
+            <td><span style='color:#ef4444'>🔴 ALTO</span></td>
+            <td style='color:#4a6070'>20:00</td>
+            <td style='color:#4a6070'>2 km</td>
+            <td style='color:#00c8ff'>20</td>
+            <td style='color:#00c8ff'>4</td>
+        </tr><tr>
+            <td>Quebrada</td>
+            <td style='color:#22c55e;font-weight:bold'>0.58</td>
+            <td><span style='color:#22c55e'>🟢 BUENO</span></td>
+            <td style='color:#4a6070'>23:00</td>
+            <td style='color:#4a6070'>1 km</td>
+            <td style='color:#00c8ff'>20</td>
+            <td style='color:#00c8ff'>4</td>
+        </tr><tr>
+            <td>Tucush</td>
+            <td style='color:#ef4444;font-weight:bold'>3.40</td>
+            <td><span style='color:#ef4444'>🔴 ALTO</span></td>
+            <td style='color:#4a6070'>21:00</td>
+            <td style='color:#4a6070'>2 km</td>
+            <td style='color:#00c8ff'>20</td>
+            <td style='color:#00c8ff'>4</td>
+        </tr><tr>
+            <td>Usupallares</td>
+            <td style='color:#ef4444;font-weight:bold'>2.34</td>
+            <td><span style='color:#ef4444'>🔴 ALTO</span></td>
+            <td style='color:#4a6070'>21:00</td>
+            <td style='color:#4a6070'>2 km</td>
+            <td style='color:#00c8ff'>20</td>
+            <td style='color:#00c8ff'>4</td>
+        </tr></tbody>
+    </table>
+  </div>
+  <div class="map-wrap" style="flex:1"><div style="width:100%;"><div style="position:relative;width:100%;height:0;padding-bottom:60%;"><span style="color:#565656">Make this Notebook Trusted to load map: File -> Trust Notebook</span><iframe srcdoc="&lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
     
@@ -269,7 +144,7 @@
             &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no&quot; /&gt;
             &lt;style&gt;
-                #map_007c60eaf553538e6ac318a0e7aad64b {
+                #map_866ffccb6a790f500c1a6a0d7a0272c8 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -306,33 +181,29 @@
 &lt;body&gt;
     
     
-    &lt;div style=&#x27;
-        position: fixed; bottom: 30px; right: 15px;
-        background: rgba(10,14,20,0.92);
-        border: 1px solid #1e2d3d; border-radius: 8px;
-        padding: 12px 16px; font-family: monospace;
-        font-size: 12px; color: #c9d8e8; z-index: 9999;
-    &#x27;&gt;
+    &lt;div style=&#x27;position:fixed;bottom:30px;right:15px;
+        background:rgba(10,14,20,0.92);border:1px solid #1e2d3d;border-radius:8px;
+        padding:12px 16px;font-family:monospace;font-size:12px;color:#c9d8e8;z-index:9999;&#x27;&gt;
         &lt;b style=&#x27;color:#00c8ff;letter-spacing:1px&#x27;&gt;PM10 · PRONÓSTICO&lt;/b&gt;&lt;br&gt;&lt;br&gt;
         &lt;span style=&#x27;color:#22c55e&#x27;&gt;●&lt;/span&gt; &amp;lt; 1 μg/m³ — Bueno&lt;br&gt;
         &lt;span style=&#x27;color:#f97316&#x27;&gt;●&lt;/span&gt; 1–2 μg/m³ — Moderado&lt;br&gt;
-        &lt;span style=&#x27;color:#ef4444&#x27;&gt;●&lt;/span&gt; &amp;gt; 2 μg/m³ — Alto
+        &lt;span style=&#x27;color:#ef4444&#x27;&gt;●&lt;/span&gt; &amp;gt; 2 μg/m³ — Alto&lt;br&gt;&lt;br&gt;
+        &lt;span style=&#x27;color:#4a6070;font-size:10px&#x27;&gt;Buffer 2km: Dos Cruces, Tucush, Usupallares&lt;br&gt;Buffer 1km: Quebrada&lt;/span&gt;
     &lt;/div&gt;
     
-    
-            &lt;div class=&quot;folium-map&quot; id=&quot;map_007c60eaf553538e6ac318a0e7aad64b&quot; &gt;&lt;/div&gt;
+            &lt;div class=&quot;folium-map&quot; id=&quot;map_866ffccb6a790f500c1a6a0d7a0272c8&quot; &gt;&lt;/div&gt;
         
 &lt;/body&gt;
 &lt;script&gt;
     
     
-            var map_007c60eaf553538e6ac318a0e7aad64b = L.map(
-                &quot;map_007c60eaf553538e6ac318a0e7aad64b&quot;,
+            var map_866ffccb6a790f500c1a6a0d7a0272c8 = L.map(
+                &quot;map_866ffccb6a790f500c1a6a0d7a0272c8&quot;,
                 {
-                    center: [-9.5602, -77.0598],
+                    center: [-9.5448925, -77.068975],
                     crs: L.CRS.EPSG3857,
                     ...{
-  &quot;zoom&quot;: 14,
+  &quot;zoom&quot;: 13,
   &quot;zoomControl&quot;: true,
   &quot;preferCanvas&quot;: false,
 }
@@ -344,7 +215,7 @@
 
         
     
-            var tile_layer_d8404c89d0179c3d040906341643f8bb = L.tileLayer(
+            var tile_layer_addcff9f4228c634ca71b81b37354603 = L.tileLayer(
                 &quot;https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png&quot;,
                 {
   &quot;minZoom&quot;: 0,
@@ -361,18 +232,18 @@
             );
         
     
-            tile_layer_d8404c89d0179c3d040906341643f8bb.addTo(map_007c60eaf553538e6ac318a0e7aad64b);
+            tile_layer_addcff9f4228c634ca71b81b37354603.addTo(map_866ffccb6a790f500c1a6a0d7a0272c8);
         
     
-            var circle_14acecf2968ddcd177c88f86a780efc9 = L.circle(
-                [-9.5602, -77.0598],
-                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#22c55e&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: true, &quot;fillColor&quot;: &quot;#22c55e&quot;, &quot;fillOpacity&quot;: 0.25, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;opacity&quot;: 1.0, &quot;radius&quot;: 2000, &quot;stroke&quot;: true, &quot;weight&quot;: 2}
-            ).addTo(map_007c60eaf553538e6ac318a0e7aad64b);
+            var circle_27eb6acfd6145b9451dcd4c7e2de6b58 = L.circle(
+                [-9.56023, -77.05986],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#ef4444&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: true, &quot;fillColor&quot;: &quot;#ef4444&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;opacity&quot;: 1.0, &quot;radius&quot;: 2000, &quot;stroke&quot;: true, &quot;weight&quot;: 2}
+            ).addTo(map_866ffccb6a790f500c1a6a0d7a0272c8);
         
     
-            circle_14acecf2968ddcd177c88f86a780efc9.bindTooltip(
+            circle_27eb6acfd6145b9451dcd4c7e2de6b58.bindTooltip(
                 `&lt;div&gt;
-                     Buffer 2km · PM10 Máx: 2.32 μg/m³
+                     Dos Cruces · PM10 Máx: 3.34 μg/m³ · Buffer 2km
                  &lt;/div&gt;`,
                 {
   &quot;sticky&quot;: true,
@@ -380,32 +251,211 @@
             );
         
     
-            var circle_marker_5d4fcd04d69287854d72b97ba122ced1 = L.circleMarker(
-                [-9.5602, -77.0598],
-                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#ffffff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: true, &quot;fillColor&quot;: &quot;#22c55e&quot;, &quot;fillOpacity&quot;: 1, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;opacity&quot;: 1.0, &quot;radius&quot;: 7, &quot;stroke&quot;: true, &quot;weight&quot;: 2}
-            ).addTo(map_007c60eaf553538e6ac318a0e7aad64b);
+            var circle_marker_458bdbf7db5d8a5f8155aacd5a4cfd89 = L.circleMarker(
+                [-9.56023, -77.05986],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#ffffff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: true, &quot;fillColor&quot;: &quot;#ef4444&quot;, &quot;fillOpacity&quot;: 1, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;opacity&quot;: 1.0, &quot;radius&quot;: 7, &quot;stroke&quot;: true, &quot;weight&quot;: 2}
+            ).addTo(map_866ffccb6a790f500c1a6a0d7a0272c8);
         
     
-        var popup_3c2b4578eb14c5ea22e0ad664dad033f = L.popup({
+        var popup_ce0cade49c16be7cd9b723b1b55810a2 = L.popup({
   &quot;maxWidth&quot;: 260,
 });
 
         
             
-                var html_d30c1098e6389c0ca34df6adf0388013 = $(`&lt;div id=&quot;html_d30c1098e6389c0ca34df6adf0388013&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;             &lt;div style=&#x27;font-family:monospace;min-width:220px;padding:4px&#x27;&gt;             &lt;b&gt;📍 Dos Cruces&lt;/b&gt;&lt;br&gt;             &lt;hr style=&#x27;margin:4px 0&#x27;&gt;             PM10 Máx Pronóstico: &lt;b&gt;2.32 μg/m³&lt;/b&gt;&lt;br&gt;             Categoría: &lt;b style=&#x27;color:#22c55e&#x27;&gt;🟢 BUENO&lt;/b&gt;&lt;br&gt;             Hora del máximo: &lt;b&gt;24/02/2026 22:00&lt;/b&gt;&lt;br&gt;             &lt;hr style=&#x27;margin:4px 0&#x27;&gt;             Actualizado: 24/02/2026 19:19 (Hora Perú)             &lt;/div&gt;         &lt;/div&gt;`)[0];
-                popup_3c2b4578eb14c5ea22e0ad664dad033f.setContent(html_d30c1098e6389c0ca34df6adf0388013);
+                var html_32cd72a368af6cf909f16b796e051a31 = $(`&lt;div id=&quot;html_32cd72a368af6cf909f16b796e051a31&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;                 &lt;div style=&#x27;font-family:monospace;min-width:220px;padding:4px&#x27;&gt;                 &lt;b&gt;📍 Dos Cruces&lt;/b&gt;&lt;br&gt;                 &lt;hr style=&#x27;margin:4px 0&#x27;&gt;                 PM10 Máx Pronóstico: &lt;b&gt;3.34 μg/m³&lt;/b&gt;&lt;br&gt;                 Categoría: &lt;b style=&#x27;color:#ef4444&#x27;&gt;🔴 ALTO&lt;/b&gt;&lt;br&gt;                 Hora del máximo: &lt;b&gt;24/02/2026 20:00&lt;/b&gt;&lt;br&gt;                 Buffer: &lt;b&gt;2 km&lt;/b&gt;&lt;br&gt;                 &lt;hr style=&#x27;margin:4px 0&#x27;&gt;                 Obs: 20 | Pron: 4&lt;br&gt;                 Actualizado: 24/02/2026 19:50 (Perú)                 &lt;/div&gt;             &lt;/div&gt;`)[0];
+                popup_ce0cade49c16be7cd9b723b1b55810a2.setContent(html_32cd72a368af6cf909f16b796e051a31);
             
         
 
-        circle_marker_5d4fcd04d69287854d72b97ba122ced1.bindPopup(popup_3c2b4578eb14c5ea22e0ad664dad033f)
+        circle_marker_458bdbf7db5d8a5f8155aacd5a4cfd89.bindPopup(popup_ce0cade49c16be7cd9b723b1b55810a2)
         ;
 
         
     
-&lt;/script&gt;
-&lt;/html&gt;" style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe></div></div>
-  </div>
+    
+            var marker_69559c30a89d274865dd77cfbb497469 = L.marker(
+                [-9.55723, -77.05986],
+                {
+}
+            ).addTo(map_866ffccb6a790f500c1a6a0d7a0272c8);
+        
+    
+            var div_icon_53b48fcbb688a4f5f047eaec6c112a5e = L.divIcon({
+  &quot;html&quot;: &quot;\n                \u003cdiv style=\u0027font-family:monospace;background:rgba(0,0,0,0.75);\n                color:#ef4444;border:1px solid #ef4444;border-radius:4px;\n                padding:2px 7px;font-size:11px;white-space:nowrap;font-weight:bold;\u0027\u003e\n                    Dos Cruces \u00b7 3.3 \u03bcg/m\u00b3\n                \u003c/div\u003e\n            &quot;,
+  &quot;className&quot;: &quot;empty&quot;,
+});
+        
+    
+                marker_69559c30a89d274865dd77cfbb497469.setIcon(div_icon_53b48fcbb688a4f5f047eaec6c112a5e);
+            
+    
+            var circle_8acec82d7eca145ce699f849b8b51237 = L.circle(
+                [-9.55501, -77.08584],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#22c55e&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: true, &quot;fillColor&quot;: &quot;#22c55e&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;opacity&quot;: 1.0, &quot;radius&quot;: 1000, &quot;stroke&quot;: true, &quot;weight&quot;: 2}
+            ).addTo(map_866ffccb6a790f500c1a6a0d7a0272c8);
+        
+    
+            circle_8acec82d7eca145ce699f849b8b51237.bindTooltip(
+                `&lt;div&gt;
+                     Quebrada · PM10 Máx: 0.58 μg/m³ · Buffer 1km
+                 &lt;/div&gt;`,
+                {
+  &quot;sticky&quot;: true,
+}
+            );
+        
+    
+            var circle_marker_79a9f873d12a9f45e4650bc5f710cf7a = L.circleMarker(
+                [-9.55501, -77.08584],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#ffffff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: true, &quot;fillColor&quot;: &quot;#22c55e&quot;, &quot;fillOpacity&quot;: 1, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;opacity&quot;: 1.0, &quot;radius&quot;: 7, &quot;stroke&quot;: true, &quot;weight&quot;: 2}
+            ).addTo(map_866ffccb6a790f500c1a6a0d7a0272c8);
+        
+    
+        var popup_37342835598afd0ce31682a3fd319b7d = L.popup({
+  &quot;maxWidth&quot;: 260,
+});
 
+        
+            
+                var html_578fca853922a3b63d5a53e22a8ba6ae = $(`&lt;div id=&quot;html_578fca853922a3b63d5a53e22a8ba6ae&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;                 &lt;div style=&#x27;font-family:monospace;min-width:220px;padding:4px&#x27;&gt;                 &lt;b&gt;📍 Quebrada&lt;/b&gt;&lt;br&gt;                 &lt;hr style=&#x27;margin:4px 0&#x27;&gt;                 PM10 Máx Pronóstico: &lt;b&gt;0.58 μg/m³&lt;/b&gt;&lt;br&gt;                 Categoría: &lt;b style=&#x27;color:#22c55e&#x27;&gt;🟢 BUENO&lt;/b&gt;&lt;br&gt;                 Hora del máximo: &lt;b&gt;24/02/2026 23:00&lt;/b&gt;&lt;br&gt;                 Buffer: &lt;b&gt;1 km&lt;/b&gt;&lt;br&gt;                 &lt;hr style=&#x27;margin:4px 0&#x27;&gt;                 Obs: 20 | Pron: 4&lt;br&gt;                 Actualizado: 24/02/2026 19:50 (Perú)                 &lt;/div&gt;             &lt;/div&gt;`)[0];
+                popup_37342835598afd0ce31682a3fd319b7d.setContent(html_578fca853922a3b63d5a53e22a8ba6ae);
+            
+        
+
+        circle_marker_79a9f873d12a9f45e4650bc5f710cf7a.bindPopup(popup_37342835598afd0ce31682a3fd319b7d)
+        ;
+
+        
+    
+    
+            var marker_efa9dfb8715bc09e13fa4de795df26b7 = L.marker(
+                [-9.55201, -77.08584],
+                {
+}
+            ).addTo(map_866ffccb6a790f500c1a6a0d7a0272c8);
+        
+    
+            var div_icon_9900fd2e033ebe241dd61b4f532ff689 = L.divIcon({
+  &quot;html&quot;: &quot;\n                \u003cdiv style=\u0027font-family:monospace;background:rgba(0,0,0,0.75);\n                color:#22c55e;border:1px solid #22c55e;border-radius:4px;\n                padding:2px 7px;font-size:11px;white-space:nowrap;font-weight:bold;\u0027\u003e\n                    Quebrada \u00b7 0.6 \u03bcg/m\u00b3\n                \u003c/div\u003e\n            &quot;,
+  &quot;className&quot;: &quot;empty&quot;,
+});
+        
+    
+                marker_efa9dfb8715bc09e13fa4de795df26b7.setIcon(div_icon_9900fd2e033ebe241dd61b4f532ff689);
+            
+    
+            var circle_9e43a2cbe9bb6f804524d20040425232 = L.circle(
+                [-9.51011, -77.05715],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#ef4444&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: true, &quot;fillColor&quot;: &quot;#ef4444&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;opacity&quot;: 1.0, &quot;radius&quot;: 2000, &quot;stroke&quot;: true, &quot;weight&quot;: 2}
+            ).addTo(map_866ffccb6a790f500c1a6a0d7a0272c8);
+        
+    
+            circle_9e43a2cbe9bb6f804524d20040425232.bindTooltip(
+                `&lt;div&gt;
+                     Tucush · PM10 Máx: 3.40 μg/m³ · Buffer 2km
+                 &lt;/div&gt;`,
+                {
+  &quot;sticky&quot;: true,
+}
+            );
+        
+    
+            var circle_marker_64052adad7dd58fbe91e3c57dd84abb1 = L.circleMarker(
+                [-9.51011, -77.05715],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#ffffff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: true, &quot;fillColor&quot;: &quot;#ef4444&quot;, &quot;fillOpacity&quot;: 1, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;opacity&quot;: 1.0, &quot;radius&quot;: 7, &quot;stroke&quot;: true, &quot;weight&quot;: 2}
+            ).addTo(map_866ffccb6a790f500c1a6a0d7a0272c8);
+        
+    
+        var popup_27370f6f1b7b4c49ac31e060c0858943 = L.popup({
+  &quot;maxWidth&quot;: 260,
+});
+
+        
+            
+                var html_449353f6ee86f77e48afc7e783a381fe = $(`&lt;div id=&quot;html_449353f6ee86f77e48afc7e783a381fe&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;                 &lt;div style=&#x27;font-family:monospace;min-width:220px;padding:4px&#x27;&gt;                 &lt;b&gt;📍 Tucush&lt;/b&gt;&lt;br&gt;                 &lt;hr style=&#x27;margin:4px 0&#x27;&gt;                 PM10 Máx Pronóstico: &lt;b&gt;3.40 μg/m³&lt;/b&gt;&lt;br&gt;                 Categoría: &lt;b style=&#x27;color:#ef4444&#x27;&gt;🔴 ALTO&lt;/b&gt;&lt;br&gt;                 Hora del máximo: &lt;b&gt;24/02/2026 21:00&lt;/b&gt;&lt;br&gt;                 Buffer: &lt;b&gt;2 km&lt;/b&gt;&lt;br&gt;                 &lt;hr style=&#x27;margin:4px 0&#x27;&gt;                 Obs: 20 | Pron: 4&lt;br&gt;                 Actualizado: 24/02/2026 19:50 (Perú)                 &lt;/div&gt;             &lt;/div&gt;`)[0];
+                popup_27370f6f1b7b4c49ac31e060c0858943.setContent(html_449353f6ee86f77e48afc7e783a381fe);
+            
+        
+
+        circle_marker_64052adad7dd58fbe91e3c57dd84abb1.bindPopup(popup_27370f6f1b7b4c49ac31e060c0858943)
+        ;
+
+        
+    
+    
+            var marker_413972dafc3f76d3f579fc6813b144ad = L.marker(
+                [-9.507109999999999, -77.05715],
+                {
+}
+            ).addTo(map_866ffccb6a790f500c1a6a0d7a0272c8);
+        
+    
+            var div_icon_027715598dce98d8229d2821eb6af440 = L.divIcon({
+  &quot;html&quot;: &quot;\n                \u003cdiv style=\u0027font-family:monospace;background:rgba(0,0,0,0.75);\n                color:#ef4444;border:1px solid #ef4444;border-radius:4px;\n                padding:2px 7px;font-size:11px;white-space:nowrap;font-weight:bold;\u0027\u003e\n                    Tucush \u00b7 3.4 \u03bcg/m\u00b3\n                \u003c/div\u003e\n            &quot;,
+  &quot;className&quot;: &quot;empty&quot;,
+});
+        
+    
+                marker_413972dafc3f76d3f579fc6813b144ad.setIcon(div_icon_027715598dce98d8229d2821eb6af440);
+            
+    
+            var circle_1adb1db9e4d71ec6d68eedc14af5870e = L.circle(
+                [-9.55422, -77.07305],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#ef4444&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: true, &quot;fillColor&quot;: &quot;#ef4444&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;opacity&quot;: 1.0, &quot;radius&quot;: 2000, &quot;stroke&quot;: true, &quot;weight&quot;: 2}
+            ).addTo(map_866ffccb6a790f500c1a6a0d7a0272c8);
+        
+    
+            circle_1adb1db9e4d71ec6d68eedc14af5870e.bindTooltip(
+                `&lt;div&gt;
+                     Usupallares · PM10 Máx: 2.34 μg/m³ · Buffer 2km
+                 &lt;/div&gt;`,
+                {
+  &quot;sticky&quot;: true,
+}
+            );
+        
+    
+            var circle_marker_493404c3a6a3e8389c5676a08d5f83ae = L.circleMarker(
+                [-9.55422, -77.07305],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#ffffff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: true, &quot;fillColor&quot;: &quot;#ef4444&quot;, &quot;fillOpacity&quot;: 1, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;opacity&quot;: 1.0, &quot;radius&quot;: 7, &quot;stroke&quot;: true, &quot;weight&quot;: 2}
+            ).addTo(map_866ffccb6a790f500c1a6a0d7a0272c8);
+        
+    
+        var popup_4c23b3a6a34cdb0b46fd6040dfe3f489 = L.popup({
+  &quot;maxWidth&quot;: 260,
+});
+
+        
+            
+                var html_7ca7849b7f9d90a268ad2672f398eef4 = $(`&lt;div id=&quot;html_7ca7849b7f9d90a268ad2672f398eef4&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;                 &lt;div style=&#x27;font-family:monospace;min-width:220px;padding:4px&#x27;&gt;                 &lt;b&gt;📍 Usupallares&lt;/b&gt;&lt;br&gt;                 &lt;hr style=&#x27;margin:4px 0&#x27;&gt;                 PM10 Máx Pronóstico: &lt;b&gt;2.34 μg/m³&lt;/b&gt;&lt;br&gt;                 Categoría: &lt;b style=&#x27;color:#ef4444&#x27;&gt;🔴 ALTO&lt;/b&gt;&lt;br&gt;                 Hora del máximo: &lt;b&gt;24/02/2026 21:00&lt;/b&gt;&lt;br&gt;                 Buffer: &lt;b&gt;2 km&lt;/b&gt;&lt;br&gt;                 &lt;hr style=&#x27;margin:4px 0&#x27;&gt;                 Obs: 20 | Pron: 4&lt;br&gt;                 Actualizado: 24/02/2026 19:50 (Perú)                 &lt;/div&gt;             &lt;/div&gt;`)[0];
+                popup_4c23b3a6a34cdb0b46fd6040dfe3f489.setContent(html_7ca7849b7f9d90a268ad2672f398eef4);
+            
+        
+
+        circle_marker_493404c3a6a3e8389c5676a08d5f83ae.bindPopup(popup_4c23b3a6a34cdb0b46fd6040dfe3f489)
+        ;
+
+        
+    
+    
+            var marker_74464d8a46f11dd117cac1b31d35e5ae = L.marker(
+                [-9.55122, -77.07305],
+                {
+}
+            ).addTo(map_866ffccb6a790f500c1a6a0d7a0272c8);
+        
+    
+            var div_icon_87e9de81c6503aa61bff1c0a6aa886af = L.divIcon({
+  &quot;html&quot;: &quot;\n                \u003cdiv style=\u0027font-family:monospace;background:rgba(0,0,0,0.75);\n                color:#ef4444;border:1px solid #ef4444;border-radius:4px;\n                padding:2px 7px;font-size:11px;white-space:nowrap;font-weight:bold;\u0027\u003e\n                    Usupallares \u00b7 2.3 \u03bcg/m\u00b3\n                \u003c/div\u003e\n            &quot;,
+  &quot;className&quot;: &quot;empty&quot;,
+});
+        
+    
+                marker_74464d8a46f11dd117cac1b31d35e5ae.setIcon(div_icon_87e9de81c6503aa61bff1c0a6aa886af);
+            
+&lt;/script&gt;
+&lt;/html&gt;" style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe></div></div></div>
 </div>
 </body>
 </html>
