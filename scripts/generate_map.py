@@ -11,7 +11,7 @@ CLIENT_ID     = "antamina"
 CLIENT_SECRET = os.environ.get("METEOSIM_SECRET", "")
 TOKEN_URL     = "https://sso.meteosim.com/realms/suite/protocol/openid-connect/token"
 API_BASE      = "https://api.meteosim.com"
-SITE_ID       = "antamina_prediction"
+SITE_ID       = "antamina_predictions"
 TOPIC         = "ai-daily-model"
 PERU_TZ       = timezone(timedelta(hours=-5))
 
