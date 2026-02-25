@@ -75,8 +75,8 @@ def procesar(items):
     return observados, pronostico, now_peru
 
 def get_color(val):
-    if val > 2:   return "#ef4444", "ALTO",     "🔴"
-    if val >= 1:  return "#f97316", "MODERADO", "🟠"
+    if val > 100:   return "#ef4444", "ALTO",     "🔴"
+    if val >= 60:  return "#f97316", "MODERADO", "🟠"
     return             "#22c55e",  "BUENO",    "🟢"
 
 # ══════════════════════════════════════════════════════════
