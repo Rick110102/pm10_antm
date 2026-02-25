@@ -102,9 +102,10 @@ def procesar(items, corte_dt):
     return observados, pronostico
 
 def get_color(val):
-    if val > 2:  return "#ef4444", "ALTO",     "🔴"
-    if val >= 1: return "#f97316", "MODERADO", "🟠"
-    return            "#22c55e",  "BUENO",    "🟢"
+    if val > 100: return "#ef4444", "MUY ALTO",  "🔴"
+    if val > 50:  return "#f97316", "ALTO",       "🟠"
+    if val > 20:  return "#eab308", "MODERADO",   "🟡"
+    return             "#22c55e",  "BAJO",        "🟢"
 
 # ══════════════════════════════════════════════════════════
 # MAPA FOLIUM
@@ -316,9 +317,10 @@ def generar_html(resultados, mapa_render, now_peru, hora_corte):
   </div>
 
   <div class="legend-map">
-    <div class="li"><div class="dot" style="background:#22c55e"></div><span>&lt; 1 μg/m³ Bueno</span></div>
-    <div class="li"><div class="dot" style="background:#f97316"></div><span>1–2 μg/m³ Moderado</span></div>
-    <div class="li"><div class="dot" style="background:#ef4444"></div><span>&gt; 2 μg/m³ Alto</span></div>
+    <div class="li"><div class="dot" style="background:#22c55e"></div><span>&lt; 20 μg/m³ Bajo</span></div>
+    <div class="li"><div class="dot" style="background:#eab308"></div><span>20–50 μg/m³ Moderado</span></div>
+    <div class="li"><div class="dot" style="background:#f97316"></div><span>50–100 μg/m³ Alto</span></div>
+    <div class="li"><div class="dot" style="background:#ef4444"></div><span>&gt; 100 μg/m³ Muy Alto</span></div>
     <div class="li">Buffer: Dos Cruces / Tucush / Usupallares = 2km &nbsp;·&nbsp; Quebrada = 1km</div>
   </div>
 
