@@ -116,7 +116,7 @@ def generar_mapa(resultados):
     m = folium.Map(
         location=[lat_c, lng_c],
         zoom_start=13,
-        tiles="CartoDB dark_matter",
+        tiles="OpenStreetMap",
         zoom_control=True
     )
 
