@@ -116,7 +116,8 @@ def generar_mapa(resultados):
     m = folium.Map(
         location=[lat_c, lng_c],
         zoom_start=13,
-        tiles="OpenStreetMap",
+        tiles="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        attr = "Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics"
         zoom_control=True
     )
 
