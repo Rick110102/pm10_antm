@@ -192,13 +192,13 @@ def generar_html(resultados, mapa_render, now_peru, hora_corte):
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;600&display=swap" rel="stylesheet"/>
   <style>
     :root {{
-      --bg:     #0a0e14;
-      --panel:  #111820;
+      --bg:     #E3E3E3;
+      --panel:  #F5F5F5;
       --border: #1e2d3d;
-      --accent: #00c8ff;
+      --accent: #000000;
       --text:   #c9d8e8;
       --muted:  #4a6070;
-      --legend: #0d1520;
+      --legend: #F5F5F5;
     }}
     * {{ margin:0; padding:0; box-sizing:border-box; }}
     html, body {{
@@ -215,7 +215,7 @@ def generar_html(resultados, mapa_render, now_peru, hora_corte):
     }}
     .logo {{
       font-family:'Share Tech Mono',monospace;
-      font-size:12px; color:var(--accent); letter-spacing:2px;
+      font-size:20px; color:var(--accent); letter-spacing:2px;
     }}
     .hdr-right {{
       margin-left:auto;
@@ -245,11 +245,11 @@ def generar_html(resultados, mapa_render, now_peru, hora_corte):
     .chart-block {{ flex-shrink:0; }}
     .chart-label {{
       font-family:'Share Tech Mono',monospace;
-      font-size:9px; color:var(--accent);
+      font-size:12px; color:var(--accent);
       letter-spacing:1px; margin-bottom:2px;
       padding-left:2px;
     }}
-    .plotly-div {{ width:100%; height:140px; }}
+    .plotly-div {{ width:100%; height:180px; }}
     .map-panel {{
       grid-column:2; grid-row:1;
       overflow:hidden; position:relative;
@@ -270,10 +270,10 @@ def generar_html(resultados, mapa_render, now_peru, hora_corte):
       font-size:9px; color:var(--muted);
     }}
     .li {{ display:flex; align-items:center; gap:5px; }}
-    .line-solid {{ width:20px; height:2px; background:#94a3b8; }}
-    .line-pron  {{ width:20px; height:2px; background:#00c8ff; }}
-    .line-corte {{ width:2px; height:12px; background:#f59e0b; }}
-    .dot-max    {{ width:8px; height:8px; border-radius:50%; background:#ef4444; }}
+    .line-solid {{ width:20px; height:2px; background:#283552; }}
+    .line-pron  {{ width:20px; height:2px; background:#0070A3; }}
+    .line-corte {{ width:2px; height:12px; background:#E88D00; }}
+    .dot-max    {{ width:8px; height:8px; border-radius:50%; background:#850B0B; }}
     .legend-map {{
       grid-column:2; grid-row:2;
       background:var(--legend);
@@ -292,7 +292,7 @@ def generar_html(resultados, mapa_render, now_peru, hora_corte):
 <body>
 
 <header>
-  <div class="logo">⬡ ANTAMINA · MONITOR PM10 · 4 ESTACIONES</div>
+  <div class="logo">ANTAMINA - MONITOR PM10</div>
   <div class="hdr-right">
     <div>Corte: <span>{hora_corte}</span></div>
     <div>Actualizado: <span>{fecha_act}</span> (Perú)</div>
@@ -333,22 +333,22 @@ const HORA_CORTE = "{hora_corte}";
 const EJE_X_FIJO = CHART_DATA[0].eje_x;
 
 const LAYOUT_BASE = {{
-  paper_bgcolor: '#0a0e14',
-  plot_bgcolor:  '#0a0e14',
+  paper_bgcolor: '#E3E3E3',
+  plot_bgcolor:  '#E3E3E3',
   font:   {{ family:'Share Tech Mono, monospace', size:9, color:'#c9d8e8' }},
   margin: {{ t:8, r:8, b:38, l:40 }},
   xaxis: {{
-    showgrid:true, gridcolor:'#1e2d3d', gridwidth:1,
-    tickfont:{{ size:8 }}, color:'#4a6070', tickangle:-45,
+    showgrid:true, gridcolor:'#BBBBBB', gridwidth:1,
+    tickfont:{{ size:9 }}, color:'#333333', tickangle:-45,
     type:'category',
     categoryorder:'array',
     categoryarray: EJE_X_FIJO,
     range: [-0.5, EJE_X_FIJO.length - 0.5],
   }},
   yaxis: {{
-    showgrid:true, gridcolor:'#1e2d3d', gridwidth:1,
-    tickfont:{{ size:8 }}, color:'#4a6070', rangemode:'tozero',
-    title:{{ text:'μg/m³', font:{{ size:8, color:'#4a6070' }} }}
+    showgrid:true, gridcolor:'#BBBBBB', gridwidth:1,
+    tickfont:{{ size:9 }}, color:'#333333', rangemode:'tozero',
+    title:{{ text:'μg/m³', font:{{ size:9, color:'#292929' }} }}
   }},
   showlegend: false,
 }};
@@ -375,7 +375,7 @@ CHART_DATA.forEach((est, i) => {{
       x: est.obs.map(d => d.x),
       y: est.obs.map(d => d.y),
       type:'scatter', mode:'lines',
-      line:{{ color:'#94a3b8', width:1.5 }},
+      line:{{ color:'#283552', width:1.5 }},
       hovertemplate:'%{{x}}<br>%{{y:.2f}} μg/m³<extra></extra>',
     }});
   }}
@@ -385,7 +385,7 @@ CHART_DATA.forEach((est, i) => {{
       x: est.pron.map(d => d.x),
       y: est.pron.map(d => d.y),
       type:'scatter', mode:'lines',
-      line:{{ color:'#00c8ff', width:1.5 }},
+      line:{{ color:'#0070A3', width:1.5 }},
       hovertemplate:'%{{x}}<br>%{{y:.2f}} μg/m³<extra></extra>',
     }});
   }}
@@ -394,11 +394,11 @@ CHART_DATA.forEach((est, i) => {{
     traces.push({{
       x:[est.max_time], y:[est.max_val],
       type:'scatter', mode:'markers+text',
-      marker:{{ color:'#ef4444', size:8, symbol:'circle',
+      marker:{{ color:'#850B0B', size:8, symbol:'circle',
                 line:{{ color:'#fff', width:1 }} }},
       text:[est.max_val.toFixed(2)],
-      textposition:'top center',
-      textfont:{{ color:'#ef4444', size:9 }},
+      textposition:'bottom center',
+      textfont:{{ color:'#850B0B', size:12 }},
       hovertemplate:'Máx: %{{y:.2f}} μg/m³<extra></extra>',
     }});
   }}
@@ -408,16 +408,9 @@ CHART_DATA.forEach((est, i) => {{
     type:'line',
     x0:HORA_CORTE, x1:HORA_CORTE,
     y0:0, y1:1, yref:'paper',
-    line:{{ color:'#f59e0b', width:1.5, dash:'dash' }}
+    line:{{ color:'#E88D00', width:1.8, dash:'dash' }}
   }}];
-  layout.annotations = [{{
-    x:HORA_CORTE, y:0.97, yref:'paper',
-    text:HORA_CORTE, showarrow:false,
-    font:{{ color:'#f59e0b', size:8 }},
-    xanchor:'left', yanchor:'top',
-    bgcolor:'rgba(245,158,11,0.12)',
-    bordercolor:'#f59e0b', borderwidth:1, borderpad:2
-  }}];
+  layout.annotations = [];
 
   Plotly.newPlot('ch'+i, traces, layout, {{
     responsive:true, displayModeBar:false
