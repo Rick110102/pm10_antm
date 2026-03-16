@@ -17,6 +17,11 @@ PERU_TZ       = timezone(timedelta(hours=-5))
 
 ESTACIONES = [
     {
+        "nombre":        "Usupallares",
+        "location_code": "USUPALLARES",
+        "lat": -9.55422, "lng": -77.07305, "buffer_m": 2000,
+    },
+    {
         "nombre":        "Dos Cruces",
         "location_code": "2CRUCES",
         "lat": -9.56023, "lng": -77.05986, "buffer_m": 2000,
@@ -30,11 +35,6 @@ ESTACIONES = [
         "nombre":        "Tucush",
         "location_code": "TUCUSH",
         "lat": -9.51011, "lng": -77.05715, "buffer_m": 2000,
-    },
-    {
-        "nombre":        "Usupallares",
-        "location_code": "USUPALLARES",
-        "lat": -9.55422, "lng": -77.07305, "buffer_m": 2000,
     },
 ]
 
